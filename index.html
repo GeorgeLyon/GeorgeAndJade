@@ -1,4 +1,6 @@
+<meta name="robots" content="noindex">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 <style>
   body {
     background-color: whitesmoke;
@@ -10,7 +12,7 @@
     padding: 50 70 200 70;
     background-color: white;
 
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+    font-family: sans-serif; 
     font-weight: 300;
     letter-spacing: 0.2em
   }
@@ -21,9 +23,19 @@
   }
 </style>
 
+<script>
+  window.sodium = {
+      onload: function (sodium) {
+          let h = sodium.crypto_generichash(64, sodium.from_string('test'));
+          console.log(sodium.to_hex(h));
+      }
+  };
+</script>
+<script src="sodium.js" async></script>
 
 <div id="content">
-  <svg id="logo" viewBox="0 0 404 236" version="1.1" xmlns="http://www.w3.org/2000/svg"
+  <svg id="logo"
+    viewBox="0 0 404 236" version="1.1" xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
     style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <g transform="matrix(1,0,0,1,-298.925,-189.342)">
@@ -86,7 +98,7 @@
       </g>
     </g>
   </svg>
-  <br>
-
-  OCTOBER 12 . BERNAL HEIGHTS, SAN FRANCISCO
+  
+  <input id="password" type="text" onclick="unlock()"/>
+  <button>Unlock</button>
 </div>
