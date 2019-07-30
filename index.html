@@ -85,21 +85,25 @@
           const secretKey = "secret"
           const storedSecret = localStorage.getItem(secretKey)
           if (storedSecret == null) {
-            const password = prompt("Please enter the password")
+            const password = prompt(location.hash == "#wrong-password" ? "You entered the wrong password, please try again." : "Please enter the password.")
+            if (password == null) {
+              location.hash=""
+              location.reload()
+            }
             const salt = sodium.from_base64("8KfUbzbOG7tjJ6gipsklhw")
-            var secret = sodium.crypto_pwhash(sodium.crypto_secretbox_KEYBYTES, sodium.from_string(password), salt, sodium.crypto_pwhash_OPSLIMIT_INTERACTIVE, sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE, sodium.crypto_pwhash_ALG_DEFAULT)
+            var secret = sodium.crypto_pwhash(sodium.crypto_secretbox_KEYBYTES, sodium.from_string(password.toLowerCase()), salt, sodium.crypto_pwhash_OPSLIMIT_INTERACTIVE, sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE, sodium.crypto_pwhash_ALG_DEFAULT)
           } else {
             var secret = sodium.from_base64(storedSecret)
           }
           localStorage.setItem(secretKey, sodium.to_base64(secret))
 
           try {
-            console.log(secret)
             let plaintext = sodium.crypto_secretbox_open_easy(ciphertext, nonce, secret) 
             document.getElementById("content").innerHTML = sodium.to_string(plaintext)
           } catch(err) {
             console.log(err)
             localStorage.removeItem(secretKey)
+            location.hash="#wrong-password"
             location.reload()
           }
       }
