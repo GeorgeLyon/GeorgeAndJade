@@ -1,0 +1,32 @@
+<script>
+    window.sodium = {
+        onload: function (sodium) {
+          document.getElementById("nonce").value = sodium.to_base64(new Uint8Array(sodium.crypto_secretbox_NONCEBYTES))
+  
+          document.getElementById("encrypt").onclick = function() {
+            const password = document.getElementById("password").value
+            const salt = sodium.from_base64("8KfUbzbOG7tjJ6gipsklhw")
+            const secret = sodium.crypto_pwhash(sodium.crypto_secretbox_KEYBYTES, sodium.from_string(password), salt, sodium.crypto_pwhash_OPSLIMIT_INTERACTIVE, sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE, sodium.crypto_pwhash_ALG_DEFAULT)
+            document.getElementById("secret").value = sodium.to_base64(secret)
+            const nonce = sodium.from_base64(document.getElementById("nonce").value)
+            const plaintext = document.getElementById("plaintext").value
+            const ciphertext = sodium.crypto_secretbox_easy(sodium.from_string(plaintext), nonce, secret)
+
+            let roundtrip = sodium.to_string(sodium.crypto_secretbox_open_easy(ciphertext, nonce, secret))
+            if (roundtrip != plaintext) {
+              console.log(roundtrip)
+            }
+
+            document.getElementById("ciphertext").value = sodium.to_base64(ciphertext)
+          }
+        }
+    };
+</script>
+<script src="sodium.js" async></script>
+
+Password: <input id="password" style="width:300px" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/><br/>
+Secret: <input id="secret" style="width:300px" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/><br/>
+Nonce: <input id="nonce" style="width:300px" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/><br/>
+<textarea id="plaintext" cols="100" rows="30" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea><br/>
+<button id="encrypt">Encrypt</button></br>
+<textarea id="ciphertext" cols="100" rows="30" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea><br/>
